@@ -1,0 +1,262 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<title>拓扑边界态与输运性质演示</title>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+<script type="text/javascript"
+    src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+    
+<style>
+    body {
+        background: #eeeeee;
+        margin: 20px;
+    }
+
+    #myCanvas {
+        background: #eeeeee;
+        display: block;
+        border-style: double;
+        border-color: #CCC;
+        border-width: 3px;
+    }
+    .center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      width: 50%;
+    }
+
+    input[type="range"] {
+        width: 260px;
+    }
+</style>
+</head>
+
+
+<body>
+
+    <h1 style="font-family:华文中宋;line-height: 20px;" id="top"><br/>拓扑边界态与输运性质演示</h1>
+    <h3 style="font-family: 'Times New Roman', Times, serif;font-style: italic;color: darkgray;line-height:15px;">Topological Edge States and Transport Properties<hr/></h3>
+    <ol style="background-color: rgba(218, 218, 218, 0.301);width: 400px;border: solid blue;">
+        <h2 style="font-family: Palatino Linotype;line-height: 10px;" align="center"><br/>Table of Contents</h2>
+        <li><a href="#TI">拓扑绝缘体</a></li>
+        <li><a href="#TSC">拓扑超导体与Majorana零能模</a></li>
+        <li><a href="#NEGF">拓扑超导纳米线的输运性质模拟</a></li>
+        <li><a href="#REF">参考文献</a></li>
+        <br/>
+    </ol>
+    <h2 id="TI">拓扑绝缘体         <a href="#top" style="font-size: x-small;">^回到目录^</a><hr/></h2>
+    <p>朗道的费米液体理论和对称性破缺的相变理论一直是凝聚态物理的两大支柱，描述了几乎所有传统量子物态及其相变.但量子霍尔效应的发现挑战了这一秩序，揭开了了拓扑物态研究的序幕.1980年，Von Klitzing等人[1]发现在垂直磁场下，二维电子气的霍尔电导是严格量子化的，不受材料中无序、杂质等因素的影响.</p>
+    <img src="QHE.png" style="width: 300px;" class="center">
+    <p>Thouless[2]在1982年将霍尔电导与能带的拓扑成功联系了起来.利用线性响应理论，二维电子气的霍尔电导可以由久保公式得到：
+    $$
+    \sigma_{x y}=-\frac{e^{2}}{h} \sum_{n} \int \frac{d^{2} \boldsymbol{k}}{2 \pi i} F_{n}(\boldsymbol{k})
+    $$
+    其中积分对整个布里渊区进行，n标记了被占据的能级.通过对比此公式与量子力学中的贝里相位，发现$F_{n}(\boldsymbol{k})$正是贝里曲率.数学上，由久保公式给出的霍尔电导正比于一个拓扑不变量，称为陈数(Chern number).因为这个数是拓扑不变的，所以霍尔电导平台也就不受弱微扰和无序杂质的影响.
+    </p>
+    <h3>拓扑绝缘体</h3>
+    <p>1988年Haldane[3]提出一个不需要外加磁场就能实现非零霍尔电导的模型（但时间反演对称性仍需被打破）.后来，Kane和Mele[4,5]又提出在石墨烯中，自旋轨道耦合可以导致时间反演不变的量子自旋霍尔效应(QSH).这种全新的拓扑物态可以被看作是具有两个传播方向相反的边界态，由$\mathbb{Z}_{2}$拓扑数分类.但实际上石墨烯中的自旋轨道耦合太弱，不足以导致QSH.张首晟[6]等人在2006年提出了一个实际模型，即HgTe/CdTe量子阱可以实现QSH.如果自旋轨道耦合较强，导带和价带位置会重叠形成反带，使得波函数高对称点的宇称变号，从而根据付亮和Kane的理论便会发生拓扑相变.此后，拓扑绝缘体又被推广到三，物理所的方忠老师与合作者更是利用第一性原理计算预言了$Bi_{2}Se_{3}$是一个三维拓扑绝缘体，并被Zahid Hassan等人实验上证实.</p>
+    <p>下面我们就来详细分析求解张首晟等人提出的BHZ model.对于HgTe/CdTe体系，电子在$\Gamma$点附近的低能有效哈密顿量可以由kp微扰理论得到，由一个$4\times 4$的矩阵描述
+    $$
+H(\boldsymbol{k})=\left[\begin{array}{cc}
+h(\boldsymbol{k}) & 0 \\
+0 & h^{*}(-\boldsymbol{k})
+\end{array}\right]$$
+    </p>
+    <p>这里右下角的对角矩阵$h^{*}(-\boldsymbol{k})$是左上角$h(\boldsymbol{k})$的时间反演.由于只考虑低能电子，我们只需要保留哈密顿量中的最低阶几项.如果定义
+    $$
+\begin{aligned}
+&d_{x}(\boldsymbol{k})=A k_{x}, \quad d_{y}(\boldsymbol{k})=A k_{y} \\
+&d_{z}(\boldsymbol{k})=\Delta-B\left(k_{x}^{2}+k_{y}^{2}\right)
+\end{aligned}
+$$
+    那么哈密顿量可以简洁地写作$
+    h(\boldsymbol{k})=\boldsymbol{d}(\boldsymbol{k}) \cdot \boldsymbol{\sigma}
+    $（$\boldsymbol{\sigma}=\left(\sigma_{x}, \sigma_{y}, \sigma_{z}\right)$是泡利矩阵).其中参数$A,B,\Delta$是材料参数，也依赖于量子阱的宽度，
+    并且可以从第一性原理计算拟合得到.
+</p>
+    <p>具有时间反演对称保护的边缘态是拓扑绝缘体的一个至关重要的特性，其边缘态可以通过求解BHZ模型哈密顿量在开放边界条件下得到.我们对一个x方向无限长，y方向宽度为N的纳米带哈密顿量严格对角化，通过调节参数A和B(这里设$\Delta=1$)我们发现边界态是否存在与参数有关，即是否拓扑依赖于参数.所以在某些特定参数体系会发生拓扑相变，但并不破坏对称性，这是超出朗道经典的对称破缺理论的.</p>
+    <div>
+        <p style="display:inline;">A:</p>
+        <div id="A" style="display:inline;"> 1.00</div>
+        <p style="margin-left: 280px; display: inline;">B:</p>
+        <div id="B" style="display:inline;"> 0.80</div>
+        <p style="margin-left: 280px; display: inline;">N:</p>
+        <div id="N" style="display:inline;">10</div>
+    </div>
+
+    <div>
+        <input id="a" class="controls" type="range" min="0" max="3" value="1" step="0.01"
+               oninput="change1('a','A',2)" onchange="change1('a','A',2)" />
+        <input id="b" class="controls" type="range" min="0" max="1.2" value="0.8" step="0.01"
+               oninput="change1('b','B',2)" onchange="change1('b','B',2)"
+               style="margin-left: 69px" />
+        <input id="n" class="controls" type="range" min="1" max="12" value="10" step="1"
+               oninput="change1('n','N',0)" onchange="change1('n','N',0)"
+               style="margin-left: 69px" />
+    </div>
+    <br />
+    <br />
+
+    <div id="graphContainer1">
+        <canvas id="myChart1" style="width:130%;max-width:1200px" class="center"></canvas>
+    </div>
+
+ 
+
+    <h2 id="TSC">拓扑超导体与Majorana零能模        <a href="#top" style="font-size: x-small;">^回到目录^</a><hr/></h2>
+    <p>狄拉克方程预言了反粒子的存在.而Majorana准粒子是一种特殊的费米子，它的反粒子就是它本身，其交换满足non-Abelian统计的特性使得它能在拓扑量子容错计算方面具有重要的应用前景.某种材料的激发态在量子化后往往可以近似看做独立运动的“准粒子”.这一概念发源于俄国物理学家Landau对液氦的研究，如今已经是凝聚态理论的基本概念.这些准粒子作为宏观体系的集体激发态，常常表现出和微观粒子截然不同的行为.而拓扑非平庸超导体是实现Majorana准粒子的重要载体.因此，探索与研究拓扑非平庸超导体则成为近些年凝聚态物理学研究的前沿热点.
+        从理论上讲,要实现普适的拓扑非平庸超导体需要三个至关重要的因素：
+        <li><a >具有电子-空穴对称性的超导体以保证体系的能隙稳定的存在.这点对于任何超导体都是成立的，而且非常的稳定，除非破坏系统的超导电性.</a></li>
+        <li><a >能带在费米面附近具有反转性以保证非平庸拓扑指数的存在.这点保证体系的体能带具有能隙结构，但是在系统的表面却存在着拓扑保护的表面态.</a></li>
+        <li><a >自旋简并需要解除以保证未配对的Majorana准粒子稳定的存在，即体系的时间和空间反演对称性需要破缺，否则简并的Majorana准粒子将会自动地配对并形成无质量的Dirac准粒子.</a></li>
+    </p>
+    <p>根据这三点条件，美国MIT傅亮教授提出在常规s波超导体与拓扑绝缘体的异质界面处实现手征性p波拓扑非平庸超导体[7]，而清华大学薛其坤教授和上海交通大学贾金峰教授的团队在实验上也已经观测到 $NbSe_{2}/Bi_{2}Se_{3}$异质界面系统中存在着拓扑序和超导序的共存[8].</p>
+        <img src="TSC.png" style="width: 600px;" class="center">
+    <p>超导由BdG(Bogoliubov-de Gennes)哈密顿量述描述
+        $$
+        \widehat{H}=\frac{1}{2} \sum_{k}\left(c_{k}^{\dagger} c_{-k}\right) H_{B d G}\left(\begin{array}{c}
+        c_{k} \\
+        c_{-k}^{\dagger}
+        \end{array}\right) \quad H_{\mathrm{BdG}}=\left(\begin{array}{cc}
+        h_{0} & \Delta \\
+        \Delta^{\dagger} & -h_{0}^{T}
+        \end{array}\right)
+        $$
+    这里$h_{0}$是自由电子的哈密顿量，$h_{0}=-t[cos(k_{x})+cos(k_{y})]-\mu$，$\Delta$是超导的gap function，如果将它用球谐函数展开，$l=0,1,2...$分别称作s,p,d波.上述手征p波，说的就是$\Delta=\Delta_{0}(k_{x}+ik_{y})$.以下的计算我们假设$t=1$
+    </p>
+    
+  
+    <div>
+        <p style="display:inline;">$\mu$:</p>
+        <div id="Esite" style="display:inline;"> 1.00</div>
+        <p style="margin-left: 254px; display: inline;">$\Delta_{0}$:</p>
+        <div id="Delta2" style="display:inline;"> 0.500</div>
+        <p style="margin-left: 240px; display: inline;">N:</p>
+        <div id="N2" style="display:inline;">10</div>
+    </div>
+
+    <div>
+        <input id="esite" class="controls" type="range" min="-3" max="3" value="1" step="0.1"
+               oninput="change2('esite','Esite',2)" onchange="change2('esite','Esite',2)" />
+        <input id="delta2" class="controls" type="range" min="0" max="1" value="0.5" step="0.01"
+               oninput="change2('delta2','Delta2',3)" onchange="change2('delta2','Delta2',3)"
+               style="margin-left: 69px" />
+        <input id="n2" class="controls" type="range" min="1" max="12" value="10" step="1"
+               oninput="change2('n2','N2',0)" onchange="change2('n2','N2',0)"
+               style="margin-left: 69px" />
+    </div>
+
+   
+
+    <div id="graphContainer3">
+        <canvas id="myChart3" style="width:130%;max-width:1200px" class="center"></canvas>
+    </div>
+
+
+    <p>通过调节参数，可以发现$|\mu|< 2t$ 时体系是拓扑非平庸的，始终有边界态存在。并且由于超导中内禀的粒子-空穴对称性，零能处的准粒子满足$\gamma_{0}^{\dagger}=\gamma_{0}$，即粒子等于自身的反粒子，满足Majorana条件. </p>
+    <p>目前实验上实现拓扑超导除了本征的p波超导外，还可以利用近邻效应，即将拓扑绝缘体与普通的s波超导体靠在一起，在界面上诱导出等效的p波超导.</p>
+    <h3>Majorana纳米线</h3>
+    <p>考虑1D的简单情形，在拓扑平庸的参数区间，体系可以看做每个格点上的两个Majorana准粒子配对形成平庸的费米子，因而体系不显示拓扑性；而在$|\mu|< 2t$时，相邻格点的Majorana准粒子配对，因而在边界上（两端）有两个未配对的零能模.</p>
+    <img src="ns.svg" style="width: 600px;" class="center">
+    <p>为了探测端点的Majorana零能模，考虑一个金属和拓扑超导组成的NS结，中间由接触势垒隔开.当电子金属射入超导内，除了正常的透射，在界面上还会发生超导特有的Andreev反射.因为超导中电子只能以库珀对的形式存在，因此当一个电子射入超导，必定伴随着一个空穴的反射，这将带来额外的透射率.因此当界面上有零能模存在，对透射率，特别是Andreev反射一定会有影响.接下来我们就从理论上计算这样一个NS结的透射率，揭示Majorana零能模在输运上的“指纹性”特征</p>
+    <img src="Andreev.png" style="width: 300px;" class="center">
+
+    
+   
+
+    
+
+    <h2 id="NEGF">拓扑超导纳米线的输运性质模拟        <a href="#top" style="font-size: x-small;">^回到目录^</a><hr/></h2>
+    <p>这里采用的方法叫做非平衡格林函数(NEGF)，这是一种广泛应用于纳米体系输运性质计算的理论方法.体系的格林函数定义为
+        $$
+\mathbf{G}(E)=\left[E \mathbf{I}-\mathbf{H}_{2 \mathbf{D}}-\boldsymbol{\Sigma}_{\text {Lead }}\right]^{-1}
+$$
+其中$\boldsymbol{\Sigma}_{\text {Lead }}$是两侧电极的自能函数，满足$\Sigma_{L}^{r}(E)=u_{L} g_{L}^{r}(E) u_{L}^{\dagger}$和$\Sigma_{R}^{r}(E)=u_{R}^{\dagger} g_{R}^{r}(E) u_{R}$，这里$g_{L}^{r}$和$g_{R}^{r}$称为表面格林函数，他们满足一个自洽方程
+$$
+\begin{aligned}
+&{\left[E+i 0^{+}-h_{L}-\Sigma_{L}^{r}(E)\right] g_{L}^{r}(E)=I} \\
+&{\left[E+i 0^{+}-h_{R}-\Sigma_{R}^{r}(E)\right] g_{R}^{r}(E)=I}
+\end{aligned}
+$$
+所以可以通过对这个方程组的迭代求解，算出左右两个电极的自能函数和体系的格林函数. 电导就等于$
+\operatorname{Tr}\left[\Gamma_{L} G^{r} \Gamma_{R} G^{a}\right]
+$，这里$\Gamma_{L}$和$\Gamma_{R}$称为展宽函数，就是左右电极自能函数的虚部.</p>
+<p>实际计算时，我们通常利用Dyson方程对格林函数进行迭代求解$$
+    \begin{aligned}
+    &G=G^{(0)}+G^{(0)} V G \\
+    &G=G^{(0)}+G V G^{(0)}
+    \end{aligned}
+    $$
+这里G^{(0)}是未经微扰的格林函数.我们把体系划分成无数层，每次计算附加一层对原格林函数的微扰，直至收敛（微扰产生的结果可忽略）</p>
+<img src="recursive.png" style="width: 300px;" class="center">
+
+<h3>量子化零能电导峰</h3>
+
+<p>调节三个参数对应的滑块，即可得到此时透射率随偏压变化的函数.可以发现
+    <li><a >偏压小于超导能隙时，仍然有非0的透射率，这是因为Andreev反射</a></li>
+    <li><a >在拓扑非平庸的参数区间$|\mu|< 2t$时零偏压始终量子化，这是Majorana零能模引起的共振Andreev隧穿</a></li>
+    <li><a >零偏压电导峰的量子化与界面势垒大小无关，说明受拓扑保护</a></li>
+
+</p>
+        
+
+    <br />
+
+    <div>
+        <p style="display:inline;">Barrier:</p>
+        <div id="Barrier" style="display:inline;"> 1.000</div>
+        <p style="margin-left: 230px; display: inline;">$\Delta_{0}$:</p>
+        <div id="Delta" style="display:inline;"> 0.0200</div>
+        <p style="margin-left: 230px; display: inline;">$\mu$:</p>
+        <div id="Mu" style="display:inline;">1</div>
+    </div>
+
+    <div>
+        <input id="barrier" class="controls" type="range" min="0" max="3" value="1" step="0.001"
+               oninput="change('barrier','Barrier',3)" onchange="change('barrier','Barrier',3)" />
+        <input id="delta" class="controls" type="range" min="0" max="0.05" value="0.02" step="0.0001"
+               oninput="change('delta','Delta',4)" onchange="change('delta','Delta',4)"
+               style="margin-left: 69px" />
+        <input id="mu" class="controls" type="range" min="-3" max="3" value="1" step="0.1"
+               oninput="change('mu','Mu',2)" onchange="change('mu','Mu',2)"
+               style="margin-left: 69px" />
+    </div>
+
+    
+
+    <div id="graphContainer2">
+        <canvas id="myChart2" style="width:130%;max-width:1200px" class="center"></canvas>
+    </div>
+
+    <br />
+    <h2 id="REF">参考文献        <a href="#top" style="font-size: x-small;">^回到目录^</a><hr/></h2>
+
+    <ol>
+        <li>K. v. Klitzing, G. Dorda, M. Pepper, New method for high-accuracy determination of the fine-structure constant based on quantized Hall resistance, Phys. Rev. Lett. 45, 494 (1980).</li>
+        <li>D. J. Thouless, M. Kohmoto, M. P. Nightingale, M. den Nijs, Quantized Hall conductance in a two-dimensional periodic potential, Phys. Rev. Lett. 49, 405 (1982).</li>
+        <li>F. D. M. Haldane, Model for a quantum Hall effect without Landau levels: Condensed-matter realization of the "parity anomaly", Phys. Rev. Lett. 61, 2015 (1988).</li>
+        <li>C. L. Kane and E. J. Mele, Quantum spin Hall effect in graphene, Phys. Rev. Lett. 95, 226801 (2005).</li>
+        <li>C. L. Kane, E. J. Mele, Z2 topological order and the quantum spin Hall effect, Phys. Rev. Lett. 95, 146802 (2005).</li>
+        <li>B.A. Bernevig, T. Hughes and S.C. Zhang, Quantum spin Hall effect and topological phase transition in HgTe quantum wells, Science 314, 5806, 1757-1761 (2006).</li>
+        <li>L. Fu and C. L. Kane, Superconducting proximity effect and Majorana fermions at the surface of a topological insulator, Phys. Rev. Lett. 100, 096407 (2008).</li>
+        <li>M.-X. Wang, C. Liu, J.-P. Xu, F. Yang, L. Miao, M.-Y. Yao, C. L. Gao, C. Shen, X. Ma, X. Chen,Z.-A. Xu, Y. Liu, S.-C. Zhang, D. Qian, J.-F. Jia, and Qi-Kun Xue, The coexistence of superconductivity and topological order in the Bi2Se3 thin films, Science 336, 52 (2012).</li>
+        <li>https://topocondmat.org/index.html</li>
+    </ol>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.4.3/math.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <script src="functions.js"></script>
+    <script src="generation1.js"></script>
+    <script src="chart1.js"></script>
+    <script src="generation2.js"></script>
+    <script src="chart2.js"></script>
+    <script src="generation3.js"></script>
+    <script src="chart3.js"></script>
+
+</body>
+</html>
